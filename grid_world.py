@@ -16,8 +16,6 @@ def get_reward(startRow, startCol, goalRow, goalCol, oCol, oRow, num_states, m, 
     opt_col = [startCol]
     max_points = num_states
     cur_point = 0
-
-    # print('current state  row: {}, col: {}'.format(self.startRow, self.startCol))
     total_reward = 0
     while (1):
 
@@ -27,42 +25,36 @@ def get_reward(startRow, startCol, goalRow, goalCol, oCol, oRow, num_states, m, 
 
         except IndexError:
 
-            print('Didnt converge')
+            print('Could not converge')
             break
 
         cur_opt_action = optimal_policy[cur_state]
         total_reward += rm[cur_state][cur_opt_action]
 
-        if (cur_opt_action == 0):
+        if cur_opt_action == 0:
             cur_row = cur_row
             cur_col = cur_col + 1
-        elif (cur_opt_action == 1):
+        elif cur_opt_action == 1:
             cur_row = cur_row - 1
             cur_col = cur_col
-        elif (cur_opt_action == 2):
+        elif cur_opt_action == 2:
             cur_row = cur_row
             cur_col = cur_col - 1
         else:
             cur_row = cur_row + 1
             cur_col = cur_col
 
-        # Printing optimal action
-        # print('Action: {}'.format(cur_opt_action))
-        # print('Optimal Utility value for this state and this action : {}'.format(self.expected_values[int(cur_state)]))
-        # print('Transition probability for current state and current action : {}'.format(self.st[cur_opt_action][int(cur_state)][int(self.m[0][cur_row][cur_col])]))
-        # print('Reward for current state to perform current action : {}'.format(self.rm[int(cur_state)][cur_opt_action]))
-
         opt_row.append(cur_row)
         opt_col.append(cur_col)
 
         cur_point += 1
 
-        if (cur_row == goalRow):
-            if (cur_col == goalCol):
+        if cur_row == goalRow:
+            if cur_col == goalCol:
                 print('Goal Reached!!')
                 break
 
-        if (cur_point == max_points):
+        if cur_point == max_points:
             print('Steps limit over!!')
             break
 
@@ -86,7 +78,6 @@ def visualize_path(startRow, startCol, goalRow, goalCol, oCol, oRow, num_states,
     opt_col = [startCol]
     max_points = num_states
     cur_point = 0
-
 
     while 1:
 
@@ -183,6 +174,7 @@ def visualize_policy(maxRow, maxCol, startRow, startCol, goalRow, goalCol, oCol,
     figname = 'policy_' + algorithm
     fig.savefig(figname)
     plt.close()
+
 
 # Adapted from https://github.com/siddharth691/Path-Planning-using-Markov-Decision-Process
 def Q_learning(st, rm, m, goalRow, goalCol, gamma, num_states, iters):
@@ -439,8 +431,8 @@ def main():
     grid = GridClass()
     grid.get_obstacles()
     grid.build_map()
-    grid.build_st_trans_matrix()
-    grid.build_reward_matrix()
+    grid.build_state_transition_matrix()
+    grid.get_reward_matrix()
 
     grid_data = {'st': grid.st.tolist(), 'rm': grid.rm.tolist(), 'gamma': grid.gamma, 'num_states': grid.num_states,
                  'startRow': grid.startRow, 'startCol': grid.startCol, 'goalRow': grid.goalRow, 'goalCol': grid.goalCol,
@@ -478,7 +470,8 @@ def main():
     iterations = 3000
     time_total, opt_policy, reward, mean_discrepancy = Q_learning(world_data['st'], world_data['rm'], world_data['m'],
                                                                   world_data['goalRow'], world_data['goalCol'],
-                                                                  world_data['gamma'], world_data['num_states'], iterations)
+                                                                  world_data['gamma'], world_data['num_states'],
+                                                                  iterations)
 
     data_q = {'time_total': time_total, 'opt_policy': opt_policy, 'reward': reward,
               'mean_discrepancy': mean_discrepancy}
@@ -500,7 +493,7 @@ def main():
     plt.xlabel('Epsilon')
     plt.ylabel('Total Computation time (s)')
     plt.title('Q-Learning total time for %d' % iterations)
-    fig1.savefig('ComputationTime-Q.png')
+    fig1.savefig('TotalComputationTime-Q.png')
 
     # Plot reward with iterations for each epsilon
 
@@ -513,7 +506,7 @@ def main():
     plt.title('Reward collected varying with iterations (epsilon = 0.9)')
     plt.legend(['eps = 0.1', 'eps = 0.3', 'eps = 0.5', 'eps = 0.7', 'eps = 0.9'])
     plt.ylim((-100, 100))
-    fig2.savefig('reward_iter_eps-Q.png')
+    fig2.savefig('TotalRewardvsIterations_eps-Q.png')
 
     # Mean discrepancy with iterations for each epsilon
 
@@ -525,7 +518,7 @@ def main():
     plt.ylabel('Mean of discrepancy (= alpha*delta)')
     plt.title('Mean discrepancy')
     plt.legend(['eps = 0.1', 'eps = 0.3', 'eps = 0.5', 'eps = 0.7', 'eps = 0.9'])
-    fig3.savefig('mean_discrepancy-Q.png')
+    fig3.savefig('MeanDiscrepancy-Q.png')
 
     for index, eps in enumerate([0.1, 0.3, 0.5, 0.7, 0.9]):
         policy = opt_policy[index]

@@ -113,7 +113,7 @@ class GridClass:
 
         return None
 
-    def build_st_trans_matrix(self):
+    def build_state_transition_matrix(self):
         if (self.cor_pr + (self.n_actions - 1) * self.wr_pr) < 0.99:
             raise ValueError('Sum of probabilities dont match')
 
@@ -152,12 +152,12 @@ class GridClass:
                         for inner_action in range(self.n_actions):
 
                             # assign the probability of correct prob to the state in the direction of action
-                            if (inner_action == 0):
+                            if inner_action == 0:
 
                                 self.st[action][int(cur_state)][int(action_map_rot[inner_action])] = self.cor_pr
                                 prob_sum += self.cor_pr
 
-                            elif (inner_action != 2):
+                            elif inner_action != 2:
 
                                 self.st[action][int(cur_state)][int(action_map_rot[inner_action])] = self.wr_pr
                                 prob_sum += self.wr_pr
@@ -180,7 +180,7 @@ class GridClass:
 
         return None
 
-    def build_reward_matrix(self):
+    def get_reward_matrix(self):
 
         right_action = 0
         top_action = 1
